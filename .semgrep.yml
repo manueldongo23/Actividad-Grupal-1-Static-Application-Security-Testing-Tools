@@ -1,0 +1,21 @@
+rules:
+  - id: educational-sqlite-sqli
+    patterns:
+      - pattern-either:
+          - pattern: $CURSOR.execute(..., "..." + $VAR + "...", ...)
+          - pattern: |
+              $QUERY = "..." + $VAR + "..."
+              ...
+              $CURSOR.execute($QUERY, ...)
+          - pattern: $CURSOR.execute(..., f"...{$VAR}...", ...)
+          - pattern: |
+              $QUERY = f"...{$VAR}..."
+              ...
+              $CURSOR.execute($QUERY, ...)
+    message: |
+      EDUCATIONAL FINDING: Potential SQL Injection!
+      Do not construct SQL queries using string formatting or concatenation.
+      Use parameterized queries.
+    severity: ERROR
+    languages:
+      - python
